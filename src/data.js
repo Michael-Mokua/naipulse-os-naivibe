@@ -45,6 +45,49 @@ export const BREAKING = [
   '⚡ KPLC announces 8-hour maintenance outage in Westlands this Thursday',
 ];
 
+export const HERO_IMAGE_URL = '/assets/nganya_graffiti.jpg';
+export const PAGE_BACKGROUND_URL = '/assets/48ef2514daed7ba00e646a8138348b83.jpg';
+export const ALL_ASSETS = [
+  '/assets/48ef2514daed7ba00e646a8138348b83.jpg',
+  '/assets/5f5b99b4f93a1994ab4b7b8161db739b.jpg',
+  '/assets/62af4b737d7b054c711d06bd2fd0fbf7.jpg',
+  '/assets/80ec61228860937.Y3JvcCw4NTAsNjY0LDAsMTE1.png',
+  '/assets/895b8adbe386874b2f646bb34b85a79c.jpg',
+  '/assets/8a05d795d988cf0edf4d3e677f8e9879.jpg',
+  '/assets/8c391e40df888a8c557d0415e437a2a5.jpg',
+  '/assets/9aa243a1935c01cb4569055cf81ad13c.jpg',
+  '/assets/b444ea33e5658b7c8c768212347c2feb.jpg',
+  '/assets/baba_yaga.jpg',
+  '/assets/d2a1d197300713.Y3JvcCwzOTc3LDMxMTAsNTcwLDEzNw.jpg',
+  '/assets/graffiti_the_mall.jpg',
+  '/assets/intoxicated.jpg',
+  '/assets/Jomo_Kenyatta_Statue_and_KICC.jpg',
+  '/assets/Kenya-culture-guide-Nairobi.jpg',
+  '/assets/massai-tribesmen-kenya.jpg',
+  '/assets/nairobi map.jpg',
+  '/assets/nairobi scenic night view.png',
+  '/assets/nairobi_nightlife.jpg',
+  '/assets/nairobi_transport.jpg',
+  '/assets/nganya_graffiti.jpg',
+  '/assets/nRHFGQyNWSaN2teQEmRm5stRHZ3gknp311TXBh9u.png',
+  '/assets/Uhuru_Monument.jpg',
+];
+
+export const HERO_ACCENT_IMAGES = [
+  '/assets/80ec61228860937.Y3JvcCw4NTAsNjY0LDAsMTE1.png',
+  '/assets/baba_yaga.jpg',
+  '/assets/nairobi scenic night view.png',
+  '/assets/8a05d795d988cf0edf4d3e677f8e9879.jpg',
+  '/assets/Uhuru_Monument.jpg',
+];
+
+export const CREATOR_FEED = ALL_ASSETS.map((image, index) => ({
+  image,
+  caption: `Nairobi street frame ${index + 1}`,
+  sub: 'City pulse archive',
+  source: 'Local asset',
+}));
+
 export const VERDICT_CONFIG = {
   TRUE: { label: 'Verified True', color: '#0F6E56', bg: '#E1F5EE', icon: 'ti-circle-check' },
   FALSE: { label: 'False', color: '#993C1D', bg: '#FAECE7', icon: 'ti-circle-x' },
