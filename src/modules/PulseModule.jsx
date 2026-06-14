@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
-import { BREAKING, FOOTBALL, HEADLINES, NSE_STOCKS, ROUTES, WEATHER_DATA } from '../data.js';
+import { ROUTES, fetchWeatherData, fetchHeadlineItems, fetchBreakingItems } from '../data.js';
+import { fetchNSEStocksProduction, fetchFootballScoresProduction } from '../productionDataFetchers.js';
 
-function NSEStrip() {
+function NSEStrip({ stocks = [] }) {
   const [offset, setOffset] = useState(0);
-  const items = [...NSE_STOCKS, ...NSE_STOCKS];
+  const items = [...stocks, ...stocks];
 
   useEffect(() => {
-    const id = setInterval(() => setOffset((current) => (current - 1) % (NSE_STOCKS.length * 120)), 30);
+    const id = setInterval(() => setOffset((current) => (current - 1) % (Math.max(stocks.length, 1) * 120)), 30);
     return () => clearInterval(id);
-  }, []);
+  }, [stocks.length]);
+
+  if (!stocks || stocks.length === 0) return null;
 
   return (
     <div className="nse-strip">
@@ -16,10 +19,10 @@ function NSEStrip() {
       <div className="nse-scroll">
         <div className="nse-track" style={{ transform: `translateX(${offset}px)` }}>
           {items.map((stock, index) => (
-            <span key={`${stock.sym}-${index}`} className="nse-item">
-              <span className="nse-symbol">{stock.sym}</span>
-              <span className={stock.up ? 'nse-positive' : 'nse-negative'}>{stock.price}</span>
-              <span className={stock.up ? 'nse-positive' : 'nse-negative'}>{stock.change}</span>
+            <span key={`${stock.sym || stock.ticker || index}-${index}`} className="nse-item">
+              <span className="nse-symbol">{stock.sym || stock.ticker || 'N/A'}</span>
+              <span className={stock.up ? 'nse-positive' : 'nse-negative'}>{stock.price || stock.last || '-'}</span>
+              <span className={stock.up ? 'nse-positive' : 'nse-negative'}>{stock.change || stock.diff || ''}</span>
             </span>
           ))}
         </div>
@@ -29,12 +32,13 @@ function NSEStrip() {
   );
 }
 
-function BreakingTicker() {
+function BreakingTicker({ breakingItems = [] }) {
+  if (!breakingItems || breakingItems.length === 0) return null;
   return (
     <div className="ticker-bar">
       <span className="ticker-label">BREAKING NRB</span>
       <div className="ticker-scroll">
-        {BREAKING.map((item, index) => (
+        {breakingItems.map((item, index) => (
           <span key={index} className="ticker-item">
             {item}
           </span>
@@ -44,7 +48,8 @@ function BreakingTicker() {
   );
 }
 
-function WeatherCard() {
+function WeatherCard({ weather = {} }) {
+  if (!weather) return null;
   return (
     <div className="card weather-card">
       <div className="card-header header-weather">
@@ -55,24 +60,24 @@ function WeatherCard() {
       <div className="card-body">
         <div className="weather-primary">
           <div>
-            <div className="weather-temp">{WEATHER_DATA.temp}°</div>
-            <p className="weather-condition">{WEATHER_DATA.condition} · Feels {WEATHER_DATA.feels}°</p>
+            <div className="weather-temp">{weather.temp ?? '--'}°</div>
+            <p className="weather-condition">{weather.condition ?? ''} · Feels {weather.feels ?? '--'}°</p>
           </div>
           <div className="weather-aqi">
             <span>AQI</span>
-            <strong>{WEATHER_DATA.aqi}</strong>
+            <strong>{weather.aqi ?? '—'}</strong>
           </div>
         </div>
         <div className="weather-grid">
           <div className="weather-stat">
             <i className="ti ti-droplet" />
             <div>Humidity</div>
-            <strong>{WEATHER_DATA.humidity}%</strong>
+            <strong>{weather.humidity ?? '--'}%</strong>
           </div>
           <div className="weather-stat">
             <i className="ti ti-wind" />
             <div>Wind</div>
-            <strong>{WEATHER_DATA.wind} km/h</strong>
+            <strong>{weather.wind ?? '--'} km/h</strong>
           </div>
         </div>
       </div>
@@ -80,7 +85,11 @@ function WeatherCard() {
   );
 }
 
-function FootballCard() {
+function FootballCard({ matches = [] }) {
+  if (!matches || matches.length === 0) return (
+    <div className="card scores-card"><div className="card-body">No live scores</div></div>
+  );
+
   return (
     <div className="card scores-card">
       <div className="card-header header-scores">
@@ -89,7 +98,7 @@ function FootballCard() {
         <i className="ti ti-ball-football" />
       </div>
       <div className="card-body card-body-compact">
-        {FOOTBALL.map((match, index) => (
+        {matches.map((match, index) => (
           <div key={index} className="match-row">
             <span className={match.live ? 'match-live' : 'match-competition'}>{match.live ? '● LIVE' : match.comp}</span>
             <span className="match-team">{match.home}</span>
@@ -128,7 +137,7 @@ function RouteBoard() {
   );
 }
 
-function HeadlinesCard() {
+function HeadlinesCard({ headlines = [] }) {
   const tagStyle = {
     Transport: { background: 'rgba(239,159,39,0.15)', color: '#EF9F27' },
     Business: { background: 'rgba(29,158,117,0.15)', color: '#1D9E75' },
@@ -144,12 +153,16 @@ function HeadlinesCard() {
         <i className="ti ti-news" />
       </div>
       <div className="card-body card-body-compact">
-        {HEADLINES.map((item, index) => (
-          <div key={index} className="headline-item">
-            <span className="headline-tag" style={tagStyle[item.tag] || {}}>{item.tag}</span>
-            <p className="headline-text">{item.title}</p>
-          </div>
-        ))}
+        {headlines.length === 0 ? (
+          <p style={{ opacity: 0.7 }}>No headlines available</p>
+        ) : (
+          headlines.map((item, index) => (
+            <div key={index} className="headline-item">
+              <span className="headline-tag" style={tagStyle[item.tag] || {}}>{item.tag}</span>
+              <p className="headline-text">{item.title}</p>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
@@ -178,17 +191,48 @@ function StatCards() {
 }
 
 export default function PulseModule() {
+  const [weatherData, setWeatherData] = useState(null);
+  const [headlines, setHeadlines] = useState([]);
+  const [breakingData, setBreakingData] = useState([]);
+  const [nseStocks, setNseStocks] = useState([]);
+  const [footballMatches, setFootballMatches] = useState([]);
+
+  useEffect(() => {
+    async function loadPulseData() {
+      try {
+        const [weather, heads, breaking, stocks, matches] = await Promise.all([
+          fetchWeatherData(),
+          fetchHeadlineItems(),
+          fetchBreakingItems(),
+          fetchNSEStocksProduction(),
+          fetchFootballScoresProduction(),
+        ]);
+        if (weather) setWeatherData(weather);
+        if (Array.isArray(heads)) setHeadlines(heads);
+        if (Array.isArray(breaking)) setBreakingData(breaking);
+        if (Array.isArray(stocks)) setNseStocks(stocks);
+        if (Array.isArray(matches)) setFootballMatches(matches);
+      } catch (err) {
+        console.error('Error loading pulse data:', err);
+      }
+    }
+
+    loadPulseData();
+    const intervalId = setInterval(loadPulseData, 60000);
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div className="module-wrapper pulse-module">
-      <BreakingTicker />
-      <NSEStrip />
+      <BreakingTicker breakingItems={breakingData} />
+      <NSEStrip stocks={nseStocks} />
       <StatCards />
       <div className="pulse-row">
-        <WeatherCard />
-        <FootballCard />
+        <WeatherCard weather={weatherData} />
+        <FootballCard matches={footballMatches} />
       </div>
       <RouteBoard />
-      <HeadlinesCard />
+      <HeadlinesCard headlines={headlines} />
       <div className="pulse-footer">Nairobi, Kenya · Data refreshes every 60s</div>
     </div>
   );
