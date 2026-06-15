@@ -31,6 +31,7 @@
     --matatu-purple: #7F77DD;
     --matatu-teal:   #1D9E75;
     --matatu-coral:  #D85A30;
+    --safety-orange: #FF6B35;
 
     --font-display:  'Bebas Neue', sans-serif;
     --font-body:     'Space Grotesk', sans-serif;
@@ -61,6 +62,7 @@ html, body {
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #app {
@@ -277,6 +279,7 @@ body::before {
 .hero-status-badge.pulse { border-color: rgba(0,255,136,0.45); color: #00ff88; }
 .hero-status-badge.truth { border-color: rgba(123,47,255,0.45); color: #7b2fff; }
 .hero-status-badge.vibe { border-color: rgba(255,45,120,0.45); color: #ff2d78; }
+.hero-status-badge.safety { border-color: rgba(255,107,53,0.45); color: #FF6B35; }
 
 .hero-status-note {
     color: var(--text-secondary);
@@ -746,21 +749,25 @@ body::before {
     color: var(--street-yellow);
     background: rgba(255,214,0,0.08);
     border-color: var(--street-yellow);
-    box-shadow: 0 0 20px rgba(255,214,0,0.25);
 }
 
 .nav-tab.active-truth {
-    color: var(--neon-green);
-    background: rgba(57,255,20,0.08);
-    border-color: var(--neon-green);
-    box-shadow: 0 0 20px rgba(57,255,20,0.25);
+    color: var(--electric-purple);
+    background: rgba(155,94,255,0.08);
+    border-color: var(--electric-purple);
 }
 
 .nav-tab.active-vibe {
     color: var(--hot-pink);
     background: rgba(255,45,120,0.08);
     border-color: var(--hot-pink);
-    box-shadow: 0 0 20px rgba(255,45,120,0.3);
+}
+
+.nav-tab.active-safety {
+    color: var(--safety-orange);
+    background: rgba(255,107,53,0.08);
+    border-color: var(--safety-orange);
+    box-shadow: 0 0 20px rgba(255,107,53,0.25);
 }
 
 /* ── Live dot ── */
@@ -772,6 +779,27 @@ body::before {
     box-shadow: 0 0 8px var(--neon-green);
     animation: pulse-dot 1.5s infinite;
     flex-shrink: 0;
+}
+
+/* ── Safety Content ── */
+.safety-content {
+    max-width: 1600px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+.safety-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+    .safety-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @keyframes pulse-dot {
@@ -1711,19 +1739,372 @@ body::before {
 /* ============================================================
    RESPONSIVE
    ============================================================ */
+
+/* Mobile-first approach */
 @media (max-width: 768px) {
-    .topbar { padding: 0 1rem; height: auto; flex-wrap: wrap; padding-top: 12px; padding-bottom: 12px; gap: 8px; }
-    .nav-tabs { flex-wrap: wrap; margin-left: 0; width: 100%; justify-content: center; }
-    .nav-tab { padding: 6px 12px; font-size: 11px; }
+    html, body { font-size: 14px; }
+    
+    .topbar { 
+        padding: 0 1rem; 
+        height: auto; 
+        flex-wrap: wrap; 
+        padding-top: 12px; 
+        padding-bottom: 12px; 
+        gap: 8px; 
+    }
+    
+    .nav-tabs { 
+        flex-wrap: wrap; 
+        margin-left: 0; 
+        width: 100%; 
+        justify-content: center; 
+        gap: 8px;
+    }
+    
+    .nav-tab { 
+        padding: 8px 12px; 
+        font-size: 11px;
+        min-width: 70px;
+    }
+    
     .main-content { padding: 1rem; }
-    .os-logo-text { font-size: 20px; }
-    .truth-title { font-size: 40px; }
-    .naivibe-logo { font-size: 48px; }
-    .weather-temp { font-size: 64px; }
+    
+    .os-logo-text { font-size: 18px; }
+    .os-logo-sub { font-size: 10px; }
+    
+    .truth-title { font-size: 32px; }
+    
+    .naivibe-logo { font-size: 40px; }
+    
+    .weather-temp { font-size: 48px; }
+    
     .topbar-time { display: none; }
+    
+    .hero-title { font-size: 32px !important; }
+    
+    .hero-tagline { font-size: 14px !important; }
+    
+    .hero-card { padding: 12px; }
+    
+    .hero-card-value { font-size: 20px; }
+    
+    /* Auth pages mobile */
+    .auth-form-shell { padding: 1.5rem 1rem; }
+    
+    .auth-title { font-size: 28px !important; }
+    
+    .auth-cta-btn { padding: 14px 20px; font-size: 16px; }
+    
+    /* Auth split layout mobile */
+    .auth-split { flex-direction: column; }
+    
+    .auth-left-panel { 
+        display: none; 
+        height: 200px;
+    }
+    
+    .auth-right-panel { 
+        width: 100%; 
+        padding: 1.5rem;
+    }
+    
+    .auth-quote-card {
+        display: none;
+    }
+    
+    .auth-watermark {
+        display: none;
+    }
+    
+    /* Emergency button mobile */
+    .emergency-button {
+        width: 64px;
+        height: 64px;
+    }
+    
+    .emergency-button.active {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .emergency-button-container {
+        bottom: 16px;
+        right: 16px;
+    }
+    
+    /* Modules mobile */
+    .pulse-card, .truth-card, .vibe-card {
+        padding: 1rem;
+    }
+    
+    /* NSE strip mobile */
+    .nse-strip {
+        padding: 8px 12px;
+    }
+    
+    .nse-label, .nse-live {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+    
+    .nse-item {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+    
+    /* Ticker bar mobile */
+    .ticker-bar {
+        padding: 8px 12px;
+    }
+    
+    .ticker-label {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+    
+    .ticker-item {
+        font-size: 11px;
+    }
+    
+    /* Route cards mobile */
+    .route-card {
+        padding: 10px;
+    }
+    
+    .route-number {
+        font-size: 16px;
+        width: 36px;
+        height: 36px;
+    }
+    
+    .route-name {
+        font-size: 12px;
+    }
+    
+    .route-status {
+        font-size: 10px;
+    }
+    
+    /* Weather card mobile */
+    .weather-temp {
+        font-size: 48px;
+    }
+    
+    .weather-details {
+        font-size: 11px;
+    }
+    
+    /* Truth module mobile */
+    .truth-input {
+        padding: 12px;
+        font-size: 14px;
+    }
+    
+    .truth-result {
+        padding: 12px;
+        font-size: 13px;
+    }
+    
+    /* Vibe module mobile */
+    .vibe-player {
+        padding: 12px;
+    }
+    
+    .vibe-controls button {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    /* Hero section mobile */
+    .hero-section {
+        padding: 1rem;
+        gap: 12px;
+    }
+    
+    .hero-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .hero-card {
+        padding: 12px;
+    }
+    
+    /* Creator wall mobile */
+    .creator-wall {
+        padding: 1rem;
+    }
+    
+    .creator-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    /* Footer mobile */
+    .app-footer {
+        padding: 1rem;
+        font-size: 11px;
+    }
 }
 
 @media (max-width: 480px) {
+    html, body { font-size: 13px; }
+    
+    .os-logo-mark { width: 32px; height: 32px; font-size: 16px; }
+    
+    .os-logo-text { font-size: 16px; }
+    
+    .nav-tab { 
+        padding: 6px 10px; 
+        font-size: 10px;
+        min-width: 60px;
+    }
+    
     .route-grid { grid-template-columns: repeat(2, 1fr); }
-    .naivibe-logo { font-size: 36px; }
+    
+    .naivibe-logo { font-size: 32px; }
+    
+    .hero-title { font-size: 24px !important; }
+    
+    .hero-tagline { font-size: 12px !important; }
+    
+    .hero-card { padding: 10px; }
+    
+    .hero-card-value { font-size: 18px; }
+    
+    .hero-card-detail { font-size: 11px; }
+    
+    /* Auth pages mobile */
+    .auth-form-shell { padding: 1rem; }
+    
+    .auth-title { font-size: 24px !important; }
+    
+    .auth-subtitle { font-size: 12px; }
+    
+    .auth-field { padding: 12px; font-size: 14px; }
+    
+    .auth-cta-btn { padding: 12px 16px; font-size: 14px; }
+    
+    /* Auth split layout mobile */
+    .auth-split { flex-direction: column; }
+    
+    .auth-left-panel { 
+        display: none; 
+    }
+    
+    .auth-right-panel { 
+        width: 100%; 
+        padding: 1rem;
+    }
+    
+    .auth-quote-card {
+        display: none;
+    }
+    
+    .auth-watermark {
+        display: none;
+    }
+    
+    /* Emergency button mobile */
+    .emergency-button {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .emergency-button.active {
+        width: 72px;
+        height: 72px;
+    }
+    
+    .emergency-icon { font-size: 20px; }
+    
+    .emergency-text { font-size: 8px; }
+    
+    .countdown { font-size: 28px; }
+    
+    .manage-contacts-btn {
+        padding: 6px 12px;
+        font-size: 10px;
+    }
+    
+    /* Emergency modal mobile */
+    .emergency-contacts-content {
+        padding: 20px;
+        max-height: 95vh;
+    }
+    
+    .emergency-contacts-header h2 {
+        font-size: 20px;
+    }
+    
+    /* Touch targets optimization */
+    button, a {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Modules mobile */
+    .pulse-card, .truth-card, .vibe-card {
+        padding: 0.75rem;
+    }
+    
+    /* Hero section mobile */
+    .hero-section {
+        padding: 0.75rem;
+        gap: 8px;
+    }
+    
+    .hero-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    
+    .hero-card {
+        padding: 8px;
+    }
+    
+    /* Creator wall mobile */
+    .creator-wall {
+        padding: 0.75rem;
+    }
+    
+    .creator-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    
+    /* Footer mobile */
+    .app-footer {
+        padding: 0.75rem;
+        font-size: 10px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    button:hover, a:hover {
+        background: initial;
+    }
+    
+    .nav-tab:hover {
+        background: initial;
+    }
+}
+
+/* Landscape mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .topbar { padding: 8px 1rem; }
+    
+    .nav-tab { padding: 4px 8px; font-size: 10px; }
+    
+    .hero-title { font-size: 24px !important; }
+    
+    .emergency-button-container {
+        bottom: 8px;
+        right: 8px;
+    }
 }
