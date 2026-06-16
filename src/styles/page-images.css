@@ -1,0 +1,805 @@
+/* ============================================================
+   NaiPulse OS — Per-Page Image Treatments
+   Each page = a different Nairobi neighbourhood
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap');
+
+/* --- Shared tokens --- */
+:root {
+  --np-green: #00FF88;
+  --np-purple: #7B2FFF;
+  --np-pink: #FF2D78;
+  --np-yellow: #FFD600;
+  --np-cyan: #00D4FF;
+  --np-black: #080808;
+}
+
+/* --- Global image animations --- */
+@keyframes cityImageLoad {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes kenBurns {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes scrollReveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.city-image-load {
+  animation: cityImageLoad 0.6s ease forwards;
+}
+
+.scroll-reveal {
+  animation: scrollReveal 0.6s ease forwards;
+}
+
+.city-image-hover {
+  transition: transform 0.3s ease;
+}
+
+.city-image-hover:hover {
+  transform: scale(1.02);
+}
+
+/* --- Page shell --- */
+.naipulse-page {
+  background: var(--np-black);
+  color: #fff;
+  min-height: 100vh;
+}
+
+.naipulse-page__content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px 24px;
+}
+
+/* --- Footer --- */
+.naipulse-page-footer {
+  margin-top: 48px;
+  padding: 24px 16px 32px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--np-black);
+}
+
+.naipulse-page-footer__brand {
+  margin: 0 0 6px;
+  font-family: var(--font-mono, 'Space Mono', monospace);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+}
+
+.naipulse-page-footer__tagline {
+  margin: 0;
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  color: var(--np-green);
+}
+
+/* --- Modal (shared across feature pages) --- */
+.np-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.np-modal {
+  background: var(--np-black);
+  padding: 24px;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
+  border: 2px solid var(--np-purple);
+}
+
+.np-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.np-modal__header h3 {
+  color: var(--np-purple);
+  margin: 0;
+}
+
+.np-modal__close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.np-form-group {
+  margin-bottom: 16px;
+}
+
+.np-form-group label {
+  display: block;
+  color: #ccc;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.np-form-group input,
+.np-form-group select,
+.np-form-group textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.np-form-group textarea {
+  resize: vertical;
+}
+
+.np-modal__footer {
+  display: flex;
+  gap: 12px;
+}
+
+.np-btn-cancel {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.np-btn-primary {
+  flex: 1;
+  background: linear-gradient(135deg, var(--np-purple), var(--np-pink));
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.np-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.np-page-header h1 {
+  margin: 0;
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: 24px;
+}
+
+/* ============================================================
+   /feed — City Feed (filmstrip)
+   ============================================================ */
+.page-feed {
+  background: var(--np-black);
+  min-height: 100vh;
+}
+
+.page-feed__filmstrip {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.page-feed__filmstrip-inner {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.page-feed__filmstrip-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  animation: kenBurns 8s ease-in-out infinite, cityImageLoad 0.6s ease forwards;
+}
+
+.page-feed__filmstrip-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, var(--np-black) 100%);
+  pointer-events: none;
+}
+
+.page-feed__filmstrip-meta {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+  font-family: var(--font-mono, 'Space Mono', monospace);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--np-green);
+  letter-spacing: 0.1em;
+}
+
+.page-feed__body {
+  position: relative;
+  z-index: 2;
+  margin-top: -72px;
+  padding: 0 16px 0;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.page-feed__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0 20px;
+}
+
+.page-feed__header h1 {
+  color: #fff;
+  margin: 0;
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: 24px;
+}
+
+.page-feed__card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  animation: scrollReveal 0.6s ease forwards;
+}
+
+/* ============================================================
+   /chat — Left vertical strip
+   ============================================================ */
+.page-chat {
+  display: flex;
+  background: var(--np-black);
+  min-height: 100vh;
+}
+
+.page-chat__strip {
+  width: 200px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.page-chat__strip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), transparent);
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), transparent);
+}
+
+.page-chat__strip-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  white-space: nowrap;
+  font-family: var(--font-mono, 'Space Mono', monospace);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  color: var(--np-cyan);
+  text-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+  pointer-events: none;
+}
+
+.page-chat__main {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-chat__main .np-page-header h1 {
+  color: var(--np-purple);
+}
+
+/* ============================================================
+   /safe-routes — Matatu route board cards
+   ============================================================ */
+.page-routes {
+  background: var(--np-black);
+  min-height: 100vh;
+  padding: 0 16px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-routes__board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.route-status-card {
+  position: relative;
+  height: 160px;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: default;
+  transition: transform 0.3s ease;
+}
+
+.route-status-card:hover {
+  transform: translateY(-4px);
+}
+
+.route-status-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.route-status-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  transition: background 0.3s ease;
+}
+
+.route-status-card:hover .route-status-card__overlay {
+  background: rgba(0, 0, 0, 0.58);
+}
+
+.route-status-card__num {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 64px;
+  font-weight: 900;
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  color: #fff;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.8);
+  line-height: 1;
+}
+
+.route-status-card__badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-family: var(--font-mono, 'Space Mono', monospace);
+}
+
+.route-status-card__badge.clear {
+  background: var(--np-green);
+  color: #000;
+}
+
+.route-status-card__badge.slow {
+  background: var(--np-yellow);
+  color: #000;
+}
+
+.route-status-card__badge.jam {
+  background: var(--np-pink);
+  color: #fff;
+}
+
+.page-routes .np-page-header h1 {
+  color: var(--np-green);
+}
+
+/* ============================================================
+   /community-watch — June 25 cinematic panel
+   ============================================================ */
+.page-watch {
+  background: var(--np-black);
+  min-height: 100vh;
+  padding: 0 16px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-watch__panel {
+  position: relative;
+  height: 360px;
+  overflow: hidden;
+  border-left: 4px solid var(--np-pink);
+  margin-bottom: 24px;
+}
+
+.page-watch__panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(0.7) contrast(1.1);
+}
+
+.page-watch__panel-copy {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  background: linear-gradient(to top, rgba(8, 8, 8, 0.95), transparent);
+}
+
+.page-watch__panel-date {
+  display: block;
+  color: var(--np-pink);
+  font-weight: bold;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  margin-bottom: 8px;
+  font-family: var(--font-mono, 'Space Mono', monospace);
+}
+
+.page-watch__panel-quote {
+  margin: 0;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.page-watch__alert {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  animation: scrollReveal 0.6s ease forwards;
+}
+
+.page-watch__alert.danger {
+  border-left: 4px solid var(--np-pink);
+}
+
+.page-watch__alert.caution {
+  border-left: 4px solid var(--np-yellow);
+}
+
+.page-watch__alert.info {
+  border-left: 4px solid var(--np-green);
+}
+
+.page-watch .np-page-header h1 {
+  color: var(--np-pink);
+}
+
+/* ============================================================
+   /events — Diagonal split
+   ============================================================ */
+.page-events {
+  background: var(--np-black);
+  min-height: 100vh;
+}
+
+.page-events__split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 80px);
+}
+
+.page-events__list-side {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.page-events__visual {
+  position: relative;
+  overflow: hidden;
+  clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+.page-events__visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.page-events__visual-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, var(--np-black) 0%, transparent 35%);
+  pointer-events: none;
+}
+
+.page-events__event-badge {
+  position: absolute;
+  bottom: 32px;
+  right: 24px;
+  z-index: 2;
+  background: rgba(123, 47, 255, 0.9);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-family: var(--font-mono, 'Space Mono', monospace);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.page-events__card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  animation: scrollReveal 0.6s ease forwards;
+}
+
+.page-events .np-page-header h1 {
+  color: var(--np-yellow);
+}
+
+/* ============================================================
+   /lost-found — Polaroid notice board
+   ============================================================ */
+.page-lostfound {
+  min-height: 100vh;
+  background-color: #1a1208;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  padding: 0 16px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-lostfound__pin-board {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0 24px;
+}
+
+.page-lostfound__polaroid {
+  position: relative;
+  width: 200px;
+  background: #fff;
+  padding: 12px 12px 48px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  transform: rotate(-2deg);
+  animation: cityImageLoad 0.6s ease forwards, scrollReveal 0.6s ease forwards;
+}
+
+.page-lostfound__pin {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  filter: drop-shadow(0 0 6px var(--np-yellow));
+  z-index: 2;
+}
+
+.page-lostfound__polaroid img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.page-lostfound__polaroid-caption {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+  padding: 0 8px;
+}
+
+.page-lostfound__note {
+  background: #f5f0e6;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  padding: 16px;
+  color: #1a1208;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.25);
+  animation: scrollReveal 0.6s ease forwards;
+}
+
+.page-lostfound__note:nth-child(odd) {
+  transform: rotate(1.5deg);
+}
+
+.page-lostfound__note:nth-child(even) {
+  transform: rotate(-1deg);
+}
+
+.page-lostfound__notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.page-lostfound .np-page-header h1 {
+  color: var(--np-cyan);
+}
+
+/* ============================================================
+   /carpool — Windscreen HUD
+   ============================================================ */
+.page-carpool {
+  background: var(--np-black);
+  min-height: 100vh;
+  padding: 0 16px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-carpool__windscreen {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.page-carpool__windscreen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+.page-carpool__hud-lines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    transparent,
+    transparent 20px,
+    rgba(0, 255, 136, 0.03) 20px,
+    rgba(0, 255, 136, 0.03) 21px
+  );
+  pointer-events: none;
+}
+
+.page-carpool__gps {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 2;
+  font-family: var(--font-mono, 'Space Mono', monospace);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--np-green);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+}
+
+.page-carpool__windscreen-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48%;
+  background: linear-gradient(to bottom, transparent, var(--np-black));
+  pointer-events: none;
+}
+
+.page-carpool .np-page-header h1 {
+  color: var(--np-green);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 768px) {
+  .page-feed__filmstrip {
+    height: 200px;
+  }
+
+  .page-feed__body {
+    margin-top: -48px;
+  }
+
+  .page-chat {
+    flex-direction: column;
+  }
+
+  .page-chat__strip {
+    width: 100%;
+    height: 60px;
+    position: relative;
+  }
+
+  .page-chat__strip img {
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
+  }
+
+  .page-chat__strip-label {
+    transform: translate(-50%, -50%) rotate(0deg);
+    font-size: 10px;
+    top: 50%;
+  }
+
+  .page-chat__main {
+    padding: 12px 16px 24px;
+  }
+
+  .page-events__split {
+    grid-template-columns: 1fr;
+  }
+
+  .page-events__visual {
+    height: 200px;
+    clip-path: none;
+    order: -1;
+  }
+
+  .page-events__list-side {
+    padding: 16px;
+  }
+
+  .page-watch__panel {
+    height: 260px;
+  }
+
+  .np-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
